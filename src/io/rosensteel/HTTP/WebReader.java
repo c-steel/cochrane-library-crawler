@@ -14,13 +14,17 @@ import java.io.IOException;
 
 public class WebReader {
 
-    public static WebResult read(String url) throws IOException {
+    private HttpClient client;
+
+    public WebReader(HttpClient client) {
+        this.client = client;
+    }
+
+    public WebResult read(String url) throws IOException {
         WebResult webResult;
 
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpGet request = makeDefaultRequest(url);
         webResult = client.execute(request, responseHandler);
-        client.close();
 
         return webResult;
     }
