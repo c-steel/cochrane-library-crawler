@@ -1,5 +1,7 @@
 package io.rosensteel.HTTP;
 
+import io.rosensteel.Stubs.BadRequestHttpClientStub;
+import io.rosensteel.Stubs.OkHttpClient;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

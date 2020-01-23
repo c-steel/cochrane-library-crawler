@@ -1,4 +1,4 @@
-package io.rosensteel.HTTP;
+package io.rosensteel.Stubs;
 
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
