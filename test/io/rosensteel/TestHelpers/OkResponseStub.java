@@ -1,4 +1,4 @@
-package io.rosensteel.Stubs;
+package io.rosensteel.TestHelpers;
 
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -7,7 +7,6 @@ import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Locale;
 
 class OkResponseStub implements CloseableHttpResponse {
@@ -54,7 +53,9 @@ class OkResponseStub implements CloseableHttpResponse {
     @Override
     public HttpEntity getEntity() {
         BasicHttpEntity entity = new BasicHttpEntity();
-        entity.setContent(new ByteArrayInputStream("SampleText".getBytes()));
+        String sampleHtml = "<html><head></head><body><p>SampleText<p><a href=\"https://www.google.com\">Google</a><a href=\"/testRelative\">TestRelative</a></body></html>";
+
+        entity.setContent(new ByteArrayInputStream(sampleHtml.getBytes()));
         return entity;
     }
 

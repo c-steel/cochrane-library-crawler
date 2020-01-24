@@ -1,13 +1,9 @@
-package io.rosensteel.HTTP;
+package io.rosensteel.Http;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.HeaderGroup;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -15,9 +11,15 @@ import java.io.IOException;
 public class WebReader {
 
     private HttpClient client;
+    String baseUri;
 
-    public WebReader(HttpClient client) {
+    public WebReader(HttpClient client, String baseUri) {
         this.client = client;
+        this.baseUri = baseUri;
+    }
+
+    public WebResult read() throws IOException {
+        return read(baseUri);
     }
 
     public WebResult read(String url) throws IOException {
@@ -29,7 +31,7 @@ public class WebReader {
         return webResult;
     }
 
-    private static HttpGet makeDefaultRequest(String url) {
+    private HttpGet makeDefaultRequest(String url) {
         HttpGet request = new HttpGet(url);
         request.setHeader("Accept", "text/html");
         request.setHeader("Accept-Language", "en-US,en");
@@ -37,13 +39,13 @@ public class WebReader {
         return request;
     }
 
-    private static ResponseHandler<WebResult> responseHandler = httpResponse -> {
+    private ResponseHandler<WebResult> responseHandler = httpResponse -> {
         int status = httpResponse.getStatusLine().getStatusCode();
         if (status == 200) {
             HttpEntity entity = httpResponse.getEntity();
-            return new WebResult(true, EntityUtils.toString(entity));
+            return new WebResult(true, EntityUtils.toString(entity), baseUri);
         } else {
-            return new WebResult(false, "");
+            return new WebResult(false, "", baseUri);
         }
     };
 

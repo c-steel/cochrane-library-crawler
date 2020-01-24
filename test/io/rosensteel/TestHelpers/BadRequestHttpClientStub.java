@@ -1,4 +1,4 @@
-package io.rosensteel.Stubs;
+package io.rosensteel.TestHelpers;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;

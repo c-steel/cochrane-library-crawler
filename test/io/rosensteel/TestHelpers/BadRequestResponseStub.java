@@ -1,11 +1,10 @@
-package io.rosensteel.Stubs;
+package io.rosensteel.TestHelpers;
 
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
-import java.io.IOException;
 import java.util.Locale;
 
 class BadRequestResponseStub implements CloseableHttpResponse {
