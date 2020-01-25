@@ -1,5 +1,6 @@
-package io.rosensteel.Http;
+package io.rosensteel.Cochrane;
 
+import io.rosensteel.Http.WebDataExtractor;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -13,13 +14,13 @@ public class CochraneExtractors {
         Element subsection = dom.select("div:contains(Browse by topic)").last();
         Elements linkElements = subsection.select("a[href]:has(button)");
         for(Element linkElement: linkElements) {
-            links.put(linkElement.text(), linkElement.attr("abs:href") + "&resultPerPage=200");
+            links.put(linkElement.text(), linkElement.attr("abs:href") );
         }
 
         return links;
     };
 
-    public static WebDataExtractor<HashMap<String, String>> articleLinkExtractor = dom -> {
+    public static WebDataExtractor<HashMap<String, String>> reviewLinkExtractor = dom -> {
         HashMap<String, String> links = new HashMap<>();
 
         Elements elements = dom.select("div h3 a[href]");
@@ -30,7 +31,7 @@ public class CochraneExtractors {
         return links;
     };
 
-    public static WebDataExtractor<String> nextPageExtractor = dom -> {
+    public static WebDataExtractor<String> nextPageLinkExtractor = dom -> {
         String link = "";
         Elements nextButtonSelection = dom.select("a[href]:containsOwn(Next)");
         if(!nextButtonSelection.isEmpty()) {

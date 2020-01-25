@@ -4,22 +4,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class WebResult {
-    private boolean isSuccess;
     private String body;
 
     private Document dom;
 
-    public WebResult(boolean isSuccess, String body, String baseUri) {
-        this.isSuccess = isSuccess;
+    public WebResult(String body, String baseUri) {
         this.body = body;
 
         this.dom = Jsoup.parse(body);
         this.dom.setBaseUri(baseUri);
     }
 
-    public boolean isSuccess() {
-        return isSuccess;
-    }
 
     public String getBody() {
         return body;

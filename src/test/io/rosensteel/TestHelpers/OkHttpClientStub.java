@@ -8,10 +8,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
-public class OkHttpClient extends CloseableHttpClient {
+public class OkHttpClientStub extends CloseableHttpClient {
+    String htmlToReturn;
+
+    public OkHttpClientStub(String htmlToReturn) {
+        this.htmlToReturn = htmlToReturn;
+    }
+
     @Override
     protected CloseableHttpResponse doExecute(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-        return new OkResponseStub();
+        return new OkResponseStub(this.htmlToReturn);
     }
 
     @Override

@@ -1,6 +1,6 @@
-package io.rosensteel.Http;
+package io.rosensteel.Cochrane;
 
-public class CochraneEntry {
+public class CochraneReview {
     String url;
     String topic;
     String title;

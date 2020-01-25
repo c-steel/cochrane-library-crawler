@@ -10,9 +10,10 @@ import java.io.ByteArrayInputStream;
 import java.util.Locale;
 
 class OkResponseStub implements CloseableHttpResponse {
+    private String htmlToReturn;
 
-    public OkResponseStub() {
-
+    public OkResponseStub(String htmlToReturn) {
+        this.htmlToReturn = htmlToReturn;
     }
 
     @Override
@@ -53,9 +54,7 @@ class OkResponseStub implements CloseableHttpResponse {
     @Override
     public HttpEntity getEntity() {
         BasicHttpEntity entity = new BasicHttpEntity();
-        String sampleHtml = "<html><head></head><body><p>SampleText<p><a href=\"https://www.google.com\">Google</a><a href=\"/testRelative\">TestRelative</a></body></html>";
-
-        entity.setContent(new ByteArrayInputStream(sampleHtml.getBytes()));
+        entity.setContent(new ByteArrayInputStream(htmlToReturn.getBytes()));
         return entity;
     }
 
