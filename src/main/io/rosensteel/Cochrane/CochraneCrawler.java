@@ -13,17 +13,17 @@ public class CochraneCrawler {
     private boolean reportProgress = true;
     CochraneTopics topicLinks = null;
 
-    public Set<String> listAvailableTopics() throws IOException {
+    public Set<String> listAvailableTopics() {
         readTopicsIfNull();
         return topicLinks.getAllTopicNames();
     }
 
-    public CochraneReviews getReviewsForTopic(String topicName) throws IOException {
+    public CochraneReviews getReviewsForTopic(String topicName) {
         readTopicsIfNull();
         return topicLinks.getReviewsForTopic(topicName);
     }
 
-    private void readTopicsIfNull() throws IOException {
+    private void readTopicsIfNull() {
         if(topicLinks == null) {
             topicLinks = new CochraneTopics(webReader, topicsUrl, reportProgress);
         }

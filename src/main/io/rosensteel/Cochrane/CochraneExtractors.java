@@ -9,16 +9,16 @@ import java.util.HashMap;
 
 public class CochraneExtractors {
 
-    public static WebDataExtractor<HashMap<String, String>> topicLinkExtractor = dom -> {
-        HashMap<String, String> nameToLinkMap = new HashMap<>();
+    public static WebDataExtractor<CochraneTopicLinks> topicLinkExtractor = dom -> {
+       CochraneTopicLinks topicLinks = new CochraneTopicLinks();
 
         Element subsection = dom.select("div:contains(Browse by topic)").last();
         Elements linkElements = subsection.select("a[href]:has(button)");
         for(Element linkElement: linkElements) {
-            nameToLinkMap.put(linkElement.text(), linkElement.attr("abs:href"));
+            topicLinks.put(linkElement.text(), linkElement.attr("abs:href"));
         }
 
-        return nameToLinkMap;
+        return topicLinks;
     };
 
     public static WebDataExtractor<ArrayList<CochraneReview>> reviewExtractor = dom -> {

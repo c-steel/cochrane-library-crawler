@@ -22,9 +22,9 @@ public class CochraneExtractorsTest {
 
         try {
             WebResult webResult = webReader.read("www.does-not-matter.com");
-            HashMap<String, String> topicLinkMap = webResult.extractData(CochraneExtractors.topicLinkExtractor);
-            assertEquals(36, topicLinkMap.size());
-            assertEquals(expectedTopicLink, topicLinkMap.get("Lungs & airways"));
+            CochraneTopicLinks topicLinks = webResult.extractData(CochraneExtractors.topicLinkExtractor);
+            assertEquals(36, topicLinks.numTopics());
+            assertEquals(expectedTopicLink, topicLinks.get("Lungs & airways"));
         } catch (Exception e) {
             fail("Unexpected exception");
         }

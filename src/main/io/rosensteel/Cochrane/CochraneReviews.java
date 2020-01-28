@@ -5,15 +5,15 @@ import io.rosensteel.Http.WebResult;
 import java.util.ArrayList;
 
 public class CochraneReviews {
-    private Integer expectedLinkCount;
+    private Integer expectedReviewCount;
     private ArrayList<CochraneReview> reviews = new ArrayList<>();
 
     public void addReviews(WebResult reviewListPage) {
         reviews.addAll(reviewListPage.extractData(CochraneExtractors.reviewExtractor));
     }
 
-    public void setExpectedLinkCount(WebResult reviewListPage) {
-        this.expectedLinkCount = reviewListPage.extractData(CochraneExtractors.expectedReviewCountExtractor);
+    public void setExpectedReviewCount(WebResult reviewListPage) {
+        this.expectedReviewCount = reviewListPage.extractData(CochraneExtractors.expectedReviewCountExtractor);
     }
 
     public String getNextPageLink(WebResult reviewListPage) {
@@ -24,16 +24,16 @@ public class CochraneReviews {
         return reviews;
     }
 
-    public Integer getLinkCount() {
+    public Integer reviewCount() {
         return reviews.size();
     }
 
-    public Integer getExpectedLinkCount() {
-        return expectedLinkCount;
+    public Integer expectedReviewCount() {
+        return expectedReviewCount;
     }
 
     public boolean gotExpectedNumberOfReviews() {
-        return expectedLinkCount.equals(getLinkCount());
+        return expectedReviewCount.equals(reviewCount());
     }
 
     public CochraneReview getReview(int index) {
