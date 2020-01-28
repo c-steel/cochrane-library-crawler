@@ -6,70 +6,38 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 import java.util.HashMap;
-
-class OnTopicFinishedListener {
-    private HashMap<String, HashMap<String, String>> topicReviewMap;
-
-    public OnTopicFinishedListener(HashMap<String, HashMap<String, String>> topicReviewMap){
-        this.topicReviewMap = topicReviewMap;
-    };
-
-    public void onTopicFinished(String topicName,  HashMap<String, String> reviewLinkMap) {
-        this.topicReviewMap.put(topicName, reviewLinkMap);
-    };
-}
-
+import java.util.Set;
 
 public class CochraneCrawler {
     private String cochraneBaseUri = "https://wwww.cochranelibrary.com";
     private WebReader webReader = new WebReader(HttpClients.createDefault(), cochraneBaseUri);
 
+
+    // Structure of the page
+    // Topic, Review List*, Individual Review
+    // Each entry in a review list is going to take a while to visit.
+
+    // Getting the review list of a topic and turning the review list into entries should be two separate processes.
+    // Getting the topic list from the review list should also be separate
+    // Let's efficiently gather the review list first.
+
+
+    // Structure of my data
+    // Reviews (Key, Topic, Title, Link, etc...)
+    // After extraction, links do not matter.
+    // And I will be able to search and group them if I want.
+
+
+
     public void crawl() {
-        HashMap<String, HashMap<String, String>> topicReviewMap = new HashMap<>();
-        OnTopicFinishedListener onTopicFinishedListener = new OnTopicFinishedListener(topicReviewMap);
-
         try {
-            WebResult topicListPage = webReader.read("https://www.cochranelibrary.com/cdsr/reviews/topics");
-            HashMap<String, String> topicLinkMap = topicListPage.extractData(CochraneExtractors.topicLinkExtractor);
-
-            topicLinkMap.forEach((topicName, topicLink) -> {
-                new Thread(() -> {
-                    try {
-                        HashMap<String, String> reviewLinkMap = new HashMap<>();
-                        String modifiedLink = topicLink + "&resultPerPage=200";
-                        while(!modifiedLink.isEmpty()) {
-                            WebResult topicPage = webReader.read(modifiedLink);
-                            reviewLinkMap.putAll(topicPage.extractData(CochraneExtractors.reviewLinkExtractor));
-                            modifiedLink = topicPage.extractData(CochraneExtractors.nextPageLinkExtractor);
-                            // Todo Delete
-                            System.out.println(topicName + ", " + reviewLinkMap.size());
-                        }
-                        // Todo Delete
-                        System.out.println("Finished --->" + topicName + ", " + reviewLinkMap.size());
-                        onTopicFinishedListener.onTopicFinished(topicName, reviewLinkMap);
-                    } catch (IOException ex) {
-                        System.err.println("Failure while attempting to read topic page");
-                        ex.printStackTrace();
-                        System.exit(1);
-                    }
-                }).start();
-            });
-
-            topicReviewMap.forEach((topic, reviewLinkMap) -> {
-                System.out.println(topic);
-                reviewLinkMap.forEach((reviewName, reviewLink) -> {
-                    System.out.println(reviewName + ", " + reviewLink);
-                });
-            });
-
-            System.out.println(topicLinkMap);
-
-        } catch (IOException ex){
-            System.err.println("Failure while attempting to read Cochrane Library");
-            ex.printStackTrace();
-            System.exit(1);
+            TopicLinks topicLinks = new TopicLinks(webReader, "https://www.cochranelibrary.com/cdsr/reviews/topics", true);
+            String firstTopic = topicLinks.getAllTopicNames().iterator().next();
+            topicLinks.getReviewLinksForTopic("Allergy & intolerance");
+            CochraneReview firstReview = topicLinks.getReview("Allergy & intolerance", 0);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
 }

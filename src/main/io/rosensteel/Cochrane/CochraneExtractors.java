@@ -8,27 +8,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CochraneExtractors {
+
     public static WebDataExtractor<HashMap<String, String>> topicLinkExtractor = dom -> {
-        HashMap<String, String> links = new HashMap<>();
+        HashMap<String, String> nameToLinkMap = new HashMap<>();
 
         Element subsection = dom.select("div:contains(Browse by topic)").last();
         Elements linkElements = subsection.select("a[href]:has(button)");
         for(Element linkElement: linkElements) {
-            links.put(linkElement.text(), linkElement.attr("abs:href") );
+            nameToLinkMap.put(linkElement.text(), linkElement.attr("abs:href"));
         }
 
-        return links;
+        return nameToLinkMap;
     };
 
-    public static WebDataExtractor<HashMap<String, String>> reviewLinkExtractor = dom -> {
-        HashMap<String, String> links = new HashMap<>();
+    public static WebDataExtractor<ArrayList<CochraneReview>> reviewExtractor = dom -> {
+        ArrayList<CochraneReview> reviews = new ArrayList<>();
 
-        Elements elements = dom.select("div h3 a[href]");
+        Elements elements = dom.select("div.search-results-item");
         for(Element element: elements) {
-            links.put(element.text(), element.attr("abs:href"));
+            String url = element.selectFirst("h3.result-title a").absUrl("href");
+            String title = element.selectFirst("h3.result-title").text();
+            String topic = dom.selectFirst("span#searchResultText").text();
+            String author = element.selectFirst("div.search-result-authors").text();
+            String date = element.selectFirst("div.search-result-date").text();
+            reviews.add(new CochraneReview(url, topic, title, author, date));
         }
 
-        return links;
+        return reviews;
     };
 
     public static WebDataExtractor<String> nextPageLinkExtractor = dom -> {
@@ -39,6 +45,11 @@ public class CochraneExtractors {
             link = nextButton.attr("abs:href");
         }
         return link;
+    };
+
+    public static WebDataExtractor<Integer> expectedReviewCountExtractor = dom -> {
+        Element resultsCount = dom.selectFirst("span.results-number");
+        return Integer.parseInt(resultsCount.text());
     };
 
 

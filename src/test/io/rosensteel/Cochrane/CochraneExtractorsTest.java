@@ -6,6 +6,7 @@ import io.rosensteel.TestHelpers.OkHttpClientStub;
 import io.rosensteel.TestHelpers.SampleHtml;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.jsoup.helper.Validate.fail;
@@ -29,21 +30,6 @@ public class CochraneExtractorsTest {
         }
     }
 
-    @Test
-    public void reviewLinkExtractor_shouldReturnReviewTitlesMappedToLinks() {
-        WebReader webReader = new WebReader(new OkHttpClientStub(SampleHtml.cochraneReviewList), cochraneBaseUri);
-        String expectedReviewLink = "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD003533.pub2/full";
-
-        try {
-            WebResult webResult = webReader.read("www.does-not-matter.com");
-            HashMap<String, String> reviewLinkMap = webResult.extractData(CochraneExtractors.reviewLinkExtractor);
-            assertEquals(200, reviewLinkMap.size());
-            assertEquals(expectedReviewLink, reviewLinkMap.get("Primary care based clinics for asthma"));
-        } catch (Exception e) {
-            fail("Unexpected exception");
-        }
-    }
-
 
     @Test
     public void nextPageExtractor_shouldReturnLinkToNextPage() {
@@ -58,4 +44,62 @@ public class CochraneExtractorsTest {
             fail("Unexpected exception");
         }
     }
+
+    @Test
+    public void expectedReviewCountExtractor_shouldReturnTotalNumberOfReviews() {
+        WebReader webReader = new WebReader(new OkHttpClientStub(SampleHtml.cochraneReviewList), cochraneBaseUri);
+        Integer expectedNumberOfReviews = 825;
+
+        try {
+            WebResult webResult = webReader.read("www.does-not-matter.com");
+            Integer reviewCount = webResult.extractData(CochraneExtractors.expectedReviewCountExtractor);
+            assertEquals(expectedNumberOfReviews, reviewCount);
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        }
+    }
+
+    @Test
+    public void reviewExtractor_shouldReturnListOfReviews() {
+        WebReader webReader = new WebReader(new OkHttpClientStub(SampleHtml.cochraneReviewList), cochraneBaseUri);
+
+        try {
+            WebResult webResult = webReader.read("www.does-not-matter.com");
+            ArrayList<CochraneReview> reviews = webResult.extractData(CochraneExtractors.reviewExtractor);
+
+            assertEquals(200, reviews.size());
+
+            assertEquals(expectedReviews.get(0), reviews.get(0));
+            assertEquals(expectedReviews.get(100), reviews.get(100));
+            assertEquals(expectedReviews.get(199), reviews.get(199));
+
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        }
+    }
+
+    private static HashMap<Integer, CochraneReview> expectedReviews;
+    static {
+        expectedReviews = new HashMap<>();
+        expectedReviews.put(0,
+                new CochraneReview("https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD001146.pub5/full",
+                "Lungs & airways",
+                "Early (< 8 days) systemic postnatal corticosteroids for prevention of bronchopulmonary dysplasia in preterm infants",
+                "Lex W Doyle, Jeanie L Cheong, Richard A Ehrenkranz, Henry L Halliday",
+                "24 October 2017"));
+        expectedReviews.put(100,
+                new CochraneReview("https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD008578.pub3/full",
+                        "Lungs & airways",
+                        "Chinese medicinal herbs for mumps",
+                        "Min Shu, Yi Qiong Zhang, Zhiyao Li, Guan J Liu, Chaomin Wan, Yang Wen",
+                        "18 April 2015"));
+        expectedReviews.put(199,
+                new CochraneReview("https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD003086.pub3/full",
+                        "Lungs & airways",
+                        "Opioid antagonists for smoking cessation",
+                        "Sean P David, Tim Lancaster, Lindsay F Stead, A. Eden Evins, Judith J Prochaska",
+                        "6 June 2013"));
+    }
+
+
 }
