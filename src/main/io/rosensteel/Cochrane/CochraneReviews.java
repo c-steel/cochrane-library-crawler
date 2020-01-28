@@ -4,11 +4,11 @@ import io.rosensteel.Http.WebResult;
 
 import java.util.ArrayList;
 
-public class ReviewLinks {
+public class CochraneReviews {
     private Integer expectedLinkCount;
     private ArrayList<CochraneReview> reviews = new ArrayList<>();
 
-    public void addReviewLinks(WebResult reviewListPage) {
+    public void addReviews(WebResult reviewListPage) {
         reviews.addAll(reviewListPage.extractData(CochraneExtractors.reviewExtractor));
     }
 
