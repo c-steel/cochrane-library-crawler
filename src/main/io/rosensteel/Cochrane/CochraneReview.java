@@ -29,6 +29,14 @@ public class CochraneReview {
                 '}';
     }
 
+    public String toPipeDelimited() {
+        return url + "|" +
+                topic + "|" +
+                title + "|" +
+                author + "|" +
+                date;
+    }
+
     public String getUrl() {
         return url;
     }

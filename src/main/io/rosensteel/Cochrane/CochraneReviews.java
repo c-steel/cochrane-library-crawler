@@ -2,6 +2,8 @@ package io.rosensteel.Cochrane;
 
 import io.rosensteel.Http.WebResult;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class CochraneReviews {
@@ -38,6 +40,20 @@ public class CochraneReviews {
 
     public CochraneReview getReview(int index) {
         return reviews.get(index);
+    }
+
+    public void saveFile(String filename) {
+        try {
+            FileWriter out = new FileWriter(filename);
+            for (CochraneReview review : reviews) {
+                out.write(review.toPipeDelimited());
+                out.write("\n");
+            }
+
+            out.close();
+        } catch (IOException e) {
+            System.err.println("Couldn't open file (" + filename + ")");
+        }
     }
 
 }

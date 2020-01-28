@@ -10,9 +10,8 @@ public class Main {
     static ArrayList<String> topics = new ArrayList<>(crawler.listAvailableTopics());
 
     public static void main(String[] args) {
-        displayReview(10, 0);
-        displayReview(10, 20);
-        displayReview(10, 124);
+        displayTopicMenu();
+        writeReviewsFile(0, "./cochrane_reviews.txt");
     }
 
     private static void displayTopicMenu () {
@@ -33,6 +32,12 @@ public class Main {
         String topicName = topics.get(topicNumber);
         CochraneReviews reviews = crawler.getReviewsForTopic(topicName);
         System.out.println(reviews.getReview(reviewNumber));
+    }
+
+    private static void writeReviewsFile (int topicNumber, String filename) {
+        String topicName = topics.get(topicNumber);
+        CochraneReviews reviews = crawler.getReviewsForTopic(topicName);
+        reviews.saveFile(filename);
     }
 
 }
