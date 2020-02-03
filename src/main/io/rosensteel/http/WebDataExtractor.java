@@ -1,4 +1,4 @@
-package io.rosensteel.Http;
+package io.rosensteel.http;
 
 import org.jsoup.nodes.Document;
 

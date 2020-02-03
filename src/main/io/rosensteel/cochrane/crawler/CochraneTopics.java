@@ -1,7 +1,7 @@
-package io.rosensteel.Cochrane;
+package io.rosensteel.cochrane.crawler;
 
-import io.rosensteel.Http.WebReader;
-import io.rosensteel.Http.WebResult;
+import io.rosensteel.http.WebReader;
+import io.rosensteel.http.WebResult;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,6 +26,7 @@ public class CochraneTopics {
             topicLinks = topicListPage.extractData(CochraneExtractors.topicLinkExtractor);
         } catch (Exception e){
             System.err.println("Could not read site (" + topicListUrl + ")");
+            System.err.println(e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -41,18 +42,16 @@ public class CochraneTopics {
             if (isDisplayingProgress) {
                 System.out.println("Read from cache: " + topicName);
             }
-            return reviews.get(topicName);
         } else {
             if (isDisplayingProgress) {
                 System.out.println("Getting reviews for topic: " + topicName);
             }
-            CochraneReviews newReviews = crawlTopic(topicName);
-            reviews.put(topicName, newReviews);
-            return newReviews;
+            crawlTopic(topicName);
         }
+        return reviews.get(topicName);
     }
 
-    private CochraneReviews crawlTopic(String topicName) {
+    public void crawlTopic(String topicName) {
         String lookupLink = topicLinks.get(topicName) + "&resultPerPage=200";
         CochraneReviews cochraneReviews = new CochraneReviews();
         boolean firstRun = true;
@@ -69,7 +68,7 @@ public class CochraneTopics {
             }
 
             if (firstRun) {
-                cochraneReviews.setExpectedReviewCount(topicPage);
+                cochraneReviews.setExpectedReviewCount(topicPage.extractData(CochraneExtractors.expectedReviewCountExtractor));
                 firstRun = false;
             }
 
@@ -77,19 +76,24 @@ public class CochraneTopics {
             lookupLink = cochraneReviews.getNextPageLink(topicPage);
 
             if (isDisplayingProgress) {
-                System.out.println("(" + topicName + ") " + "Progress:" + cochraneReviews.reviewCount() + "/" + cochraneReviews.expectedReviewCount());
+                System.out.println("(" + topicName + ") " + "Progress:" + cochraneReviews.reviewCount() + "/" + cochraneReviews.getExpectedReviewCount());
             }
         }
 
         if (isDisplayingProgress) {
-            System.out.println("(" + topicName + ") " + "Finished:" + cochraneReviews.reviewCount() + "/" + cochraneReviews.expectedReviewCount());
+            System.out.println("(" + topicName + ") " + "Finished:" + cochraneReviews.reviewCount() + "/" + cochraneReviews.getExpectedReviewCount());
             if (!cochraneReviews.gotExpectedNumberOfReviews()) {
                 System.err.println("(" + topicName + ") " + "Error - did not get expected number of reviews");
                 System.exit(1);
             }
         }
 
-        return cochraneReviews;
+        reviews.put(topicName, cochraneReviews);
     }
 
+    public CochraneReviews getCrawledReviews() {
+        CochraneReviews allReviews = new CochraneReviews();
+        reviews.forEach((topic, reviews) -> allReviews.addReviews(reviews));
+        return allReviews;
+    }
 }

@@ -1,6 +1,6 @@
-package io.rosensteel.Cochrane;
+package io.rosensteel.cochrane.crawler;
 
-import io.rosensteel.Http.WebReader;
+import io.rosensteel.http.WebReader;
 import org.apache.http.impl.client.HttpClients;
 
 import java.util.Set;
@@ -18,6 +18,14 @@ public class CochraneCrawler {
 
     public CochraneReviews getReviewsForTopic(String topicName) {
         return topicLinks.getReviewsForTopic(topicName);
+    }
+
+    public void crawlTopic(String topicName) {
+        topicLinks.crawlTopic(topicName);
+    }
+
+    public CochraneReviews getCrawledReviews() {
+        return topicLinks.getCrawledReviews();
     }
 
 }

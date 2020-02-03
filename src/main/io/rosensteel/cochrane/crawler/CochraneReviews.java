@@ -1,21 +1,32 @@
-package io.rosensteel.Cochrane;
+package io.rosensteel.cochrane.crawler;
 
-import io.rosensteel.Http.WebResult;
+import io.rosensteel.http.WebResult;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class CochraneReviews {
-    private Integer expectedReviewCount;
+    private Integer expectedReviewCount = 0;
     private ArrayList<CochraneReview> reviews = new ArrayList<>();
+
+
+    public ArrayList<CochraneReview> getReviews() {
+        return reviews;
+    }
+
 
     public void addReviews(WebResult reviewListPage) {
         reviews.addAll(reviewListPage.extractData(CochraneExtractors.reviewExtractor));
     }
 
-    public void setExpectedReviewCount(WebResult reviewListPage) {
-        this.expectedReviewCount = reviewListPage.extractData(CochraneExtractors.expectedReviewCountExtractor);
+    public void addReviews(CochraneReviews newReviews) {
+        reviews.addAll(newReviews.getReviews());
+        expectedReviewCount += newReviews.getExpectedReviewCount();
+    }
+
+    public void setExpectedReviewCount(Integer expectedReviewCount) {
+        this.expectedReviewCount = expectedReviewCount;
     }
 
     public String getNextPageLink(WebResult reviewListPage) {
@@ -30,7 +41,7 @@ public class CochraneReviews {
         return reviews.size();
     }
 
-    public Integer expectedReviewCount() {
+    public Integer getExpectedReviewCount() {
         return expectedReviewCount;
     }
 

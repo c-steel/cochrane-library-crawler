@@ -1,4 +1,4 @@
-package io.rosensteel.Cochrane;
+package io.rosensteel.cochrane.crawler;
 
 import java.util.HashMap;
 import java.util.Set;

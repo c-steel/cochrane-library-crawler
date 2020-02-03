@@ -1,4 +1,4 @@
-package io.rosensteel.Http;
+package io.rosensteel.http;
 
 import io.rosensteel.TestHelpers.BadRequestHttpClientStub;
 import io.rosensteel.TestHelpers.OkHttpClientStub;

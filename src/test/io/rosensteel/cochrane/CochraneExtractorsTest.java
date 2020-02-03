@@ -1,9 +1,12 @@
-package io.rosensteel.Cochrane;
+package io.rosensteel.cochrane;
 
-import io.rosensteel.Http.WebReader;
-import io.rosensteel.Http.WebResult;
+import io.rosensteel.http.WebReader;
+import io.rosensteel.http.WebResult;
 import io.rosensteel.TestHelpers.OkHttpClientStub;
 import io.rosensteel.TestHelpers.SampleHtml;
+import io.rosensteel.cochrane.crawler.CochraneExtractors;
+import io.rosensteel.cochrane.crawler.CochraneReview;
+import io.rosensteel.cochrane.crawler.CochraneTopicLinks;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

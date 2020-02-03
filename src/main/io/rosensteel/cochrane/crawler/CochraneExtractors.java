@@ -1,6 +1,6 @@
-package io.rosensteel.Cochrane;
+package io.rosensteel.cochrane.crawler;
 
-import io.rosensteel.Http.WebDataExtractor;
+import io.rosensteel.http.WebDataExtractor;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
