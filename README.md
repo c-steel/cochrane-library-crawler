@@ -8,11 +8,11 @@ If your java executable is located in your path, you can run the solution from t
 
 ### Help menu & topics list
 The following will display the help menu, along with a list of topics available to crawl:
-`java -jar cochrane-library-crawler`
+`java -jar cochrane-library-crawler.jar`
 
 Example output:
 ```
-usage: java -jar cochrane-crawler
+usage: java -jar cochrane-library-crawler.jar
  -h         Display this help information
  -o <arg>   [Required] - Output filename. [-o ./cochrane_reviews.txt]
  -t <arg>   [Required] - Input topic numbers to crawl.  Comma delimited.
@@ -71,17 +71,9 @@ https://wwww.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD008427.pub3/full|Ca
 The Cochrane Library consists of reviews that contain a URL, topic, title, author, and date.  The reviews are organized by topic.  Currently, there are 36 topics.  The requirement is to extract all of the reviews for at least one topic.  The solution allows a user to extract as many or as few of the topics as they require.  It always extracts all of the reviews for a given topic.
 
 ### Program flow 
-The CLI 
-Usage
-Requirements
+The program begins at io.rosensteel.cochrane.cli.Main.  args are read from the command line and parsed using the Apache Commons CLI.  The args are used to create a CrawlerSettings object, which will contain the topics to crawl and the filename to output to.
 
-The solution is delivered as a Java JAR file. It requires Java JRE 8+.
-Running the solution
-
-If your java executable is located in your path, you can run the solution from the command line. The solution also requires an internet connection.
-Help menu & topics list
-
-The
+The Main program then uses the CochraneCrawler to read each topic from the website in order.  After all topics are read, it gets the aggregate of all cached reviews from the CochraneCrawler and saves them to a file.
 
 ### Cochrane Library structure
 Each topic links to a list of reviews for that topic.  The topic links themselves use a GET request that contains various parameters that Cochrane's system uses to serve the review list.
@@ -108,6 +100,16 @@ A generic structure for obtaining HTTP responses and extracting data seemed an a
     - The implementation will be specific to the page and data you are extracting from it.
 
 ### Cochrane specific components
+
+- CochraneExtractors is an object that contains static implementations of the WebDataExtractor used to obtain specific data from the Cochrane website.
+    - It contains: topicLinkExtractor, reviewExtractor, nextPageLinkExtractor, and expectedReviewCountExtractor
+    - These extractors use Jsoup to obtain the data from the HTML.
+
+- CochraneCrawler is the main class that encapsulates all of the work.  It delegates much of the work to CochraneTopics, but it contains the high-level interface and fixed data (such as URLs).
+
+- CochraneTopics actually performs most of the work.  
+
+- CochraneReview, CochraneReviews, and CochraneTopicLinks are simple classes that encapsulate data and provide some helper functions.
 
 ### Automated testing
 
