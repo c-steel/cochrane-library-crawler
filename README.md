@@ -28,7 +28,7 @@ Available topics....
 ```
 ### Crawling the Cochrane Library
 To actually crawl the library, two arguments are required:
-- `-o`: The output filename.  The output will be written to the file you specify here. (e.g. `-o ./cochrane_reviews.txt` will output to cochrane_reviews.txt in the current working directory.)
+- `-o`: The output filename.  The output will be written to the file you specify here. (e.g. `-o ./cochrane_reviews.txt` will output to cochrane_reviews.txt in the current working directory).
 - -`t`: The topic numbers to crawl.  Refer to the help menu to determine which topic number maps to which topic.  (e.g. `-t 0` will crawl "Lungs & airways").  To crawl multiple topics, you can separate topic numbers with commas `-t 1,2,3`.  You can also specify ranges with a dash `-t 0-15`.
 
 
@@ -38,16 +38,6 @@ Example call:
 Example command line output:
 ```
 (Methodology) Progress:35/35
-Usage
-Requirements
-
-The solution is delivered as a Java JAR file. It requires Java JRE 8+.
-Running the solution
-
-If your java executable is located in your path, you can run the solution from the command line. The solution also requires an internet connection.
-Help menu & topics list
-
-The
 (Methodology) Finished:35/35
 (Wounds) Progress:163/163
 (Wounds) Finished:163/163
@@ -71,45 +61,42 @@ https://wwww.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD008427.pub3/full|Ca
 The Cochrane Library consists of reviews that contain a URL, topic, title, author, and date.  The reviews are organized by topic.  Currently, there are 36 topics.  The requirement is to extract all of the reviews for at least one topic.  The solution allows a user to extract as many or as few of the topics as they require.  It always extracts all of the reviews for a given topic.
 
 ### Program flow 
-The program begins at io.rosensteel.cochrane.cli.Main.  args are read from the command line and parsed using the Apache Commons CLI.  The args are used to create a CrawlerSettings object, which will contain the topics to crawl and the filename to output to.
+The program begins at `io.rosensteel.cochrane.cli.Main`.  `args` are read from the command line and parsed using the Apache Commons CLI.  The `args` are used to create a `CrawlerSettings` object, which will contain the topics to crawl and the filename to output to.
 
-The Main program then uses the CochraneCrawler to read each topic from the website in order.  After all topics are read, it gets the aggregate of all cached reviews from the CochraneCrawler and saves them to a file.
+The `Main` program then uses the `CochraneCrawler` to read each topic from the website in order.  After all topics are read, it gets the aggregate of all cached reviews from the `CochraneCrawler` and saves them to a file.
 
 ### Cochrane Library structure
-Each topic links to a list of reviews for that topic.  The topic links themselves use a GET request that contains various parameters that Cochrane's system uses to serve the review list.
+Each topic links to a list of reviews for that topic.  The topic links themselves use a request that contains various parameters that Cochrane's system uses to serve the review list.
 
 ### Review count & pagination
 When a topic is selected, the review list page is displayed.  The review list includes a total number of reviews found.  Often, there are more reviews than are displayed on single page.  You need to follow the *Next* page link to obtain the next set of reviews.
 
-To assist with progress reporting and verification, the program will extract the total number of reviews and save it.  Upon processing each page of reviews, it reports its progress as the current number of reviews read out of the total available.  At the end of the process, it verifies that the total number of reviews gathered matches the number reported by the page.
+To assist with progress reporting and verification, the program will extract the total number of reviews and save it.  Upon processing each page of reviews, it reports the current number of reviews read out of the total available.  At the end of the process, it verifies that the total number of reviews gathered matches the number reported by the page.
 
 ### Speed & reviews per page
-Each response from Cochrane's severs for a list of reviews takes several seconds.  To save time, it is best to maximize the number of reviews obtained per query.  By default, the number of reviews returned is low (25).  To obtain more reviews per page, I experimented with the `&resultPerPage` parameter.  I found that a value of 200 reliably returned the maximum number of results per page. Any higher than that, and the results became unreliable.  I would often not receive the number of reviews I requested.
+Each response from Cochrane's severs for a list of reviews takes several seconds.  To save time, it is best to maximize the number of reviews obtained per request.  By default, the number of reviews returned is low (25).  To obtain more reviews per page, I experimented with the `&resultPerPage` parameter.  I found that a value of 200 reliably returned the maximum number of results per page. Any higher than that, and the results became unreliable; I would often not receive the number of reviews I requested.
 
 # Design Comments
 ### Generic HTTP and data extraction
-A generic structure for obtaining HTTP responses and extracting data seemed an appropriate framework to start with.  In my solution, the HTTP package serves this purpose.
+A generic structure for obtaining HTTP responses and extracting data seemed like an appropriate framework to start with.  In my solution, the HTTP package serves this purpose.
 
-- The WebReader is a wrapper arround an HttpClient pointed at a specific website.  
-    - The website's main url is the baseUri (e.g. https://www.cochranelibrary.com in our case).  This is neccesary to properly follow links.
-    - Once a WebReader is instantiated, you can use it to send requests and get responses from specific pages on the website (e.g. the topics page)
-- The WebResult is what is returned from a page read.
-    - It is a simple wrapper around the plain response text and a Jsoup document (referred to in the code as a dom).
-    - It has a method that takes a WebDataExtractor and applies it to the dom.  These methods are generic, which allows us to extract data of any type from the dom.
-- The WebDataExtractor is an interface that must be implemented by a concrete class.  
+- The `WebReader` is a wrapper arround an `HttpClient` pointed at a specific website.      
+   - The website's main url is the `baseUri` (e.g. https://www.cochranelibrary.com in our case).  This is neccesary to properly follow links.
+    - Once a `WebReader` is instantiated, you can use it to send requests and get responses from specific pages on the website (e.g. the topics page)
+- `WebResult` is what is returned from a page read.
+    - It is a wrapper around the plain response text and a jsoup document (referred to in the code as a dom).
+    - It has a method that takes a `WebDataExtractor` and applies it to the dom.  These methods are generic, which allows us to extract data of any type from the dom.
+- `WebDataExtractor` is an interface that must be implemented by a concrete class.  
     - The implementation will be specific to the page and data you are extracting from it.
 
 ### Cochrane specific components
+- `CochraneCrawler` is the main class that encapsulates the work.  It delegates much of the work to `CochraneTopics`, but it contains the high-level interface and fixed data (such as URLs).
 
-- CochraneExtractors is an object that contains static implementations of the WebDataExtractor used to obtain specific data from the Cochrane website.
-    - It contains: topicLinkExtractor, reviewExtractor, nextPageLinkExtractor, and expectedReviewCountExtractor
-    - These extractors use Jsoup to obtain the data from the HTML.
+- `CochraneTopics` actually performs most of the work.  Its constructor requires the `webReader` that has been established for Cochrane's main page, plus the `topicListUrl` that it will read immediately.  It parses the topic list URL into the set of available topic names, accessible with `getAllTopicNames()`.  When `crawlTopics(String topicName)` is called, it will read the website and create the `CochraneReviews` for the specified `topicName`.  It also has a method `getReviewsForTopic(String topicName)` that will read from the cache instead if is available.  Finally, `getCrawledReviews()` will return the aggregate of all reviews available in the cache.
 
-- CochraneCrawler is the main class that encapsulates all of the work.  It delegates much of the work to CochraneTopics, but it contains the high-level interface and fixed data (such as URLs).
+- `CochraneReview`, `CochraneReviews`, and `CochraneTopicLinks` are classes that encapsulate data and provide some helper functions.
 
-- CochraneTopics actually performs most of the work.  
-
-- CochraneReview, CochraneReviews, and CochraneTopicLinks are simple classes that encapsulate data and provide some helper functions.
+- `CochraneExtractors` is an object that contains static implementations of the `WebDataExtractor` used to obtain specific data from the Cochrane website. The available extractors are: `topicLinkExtractor`, `reviewExtractor`, `nextPageLinkExtractor`, and `expectedReviewCountExtractor`.  These extractors use jsoup to obtain the data from the HTML.
 
 ### Automated testing
 
