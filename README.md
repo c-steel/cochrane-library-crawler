@@ -81,7 +81,7 @@ Each response from Cochrane's severs for a list of reviews takes several seconds
 A generic structure for obtaining HTTP responses and extracting data seemed like an appropriate framework to start with.  In my solution, the HTTP package serves this purpose.
 
 - The `WebReader` is a wrapper arround an `HttpClient` pointed at a specific website.      
-   - The website's main url is the `baseUri` (e.g. https://www.cochranelibrary.com in our case).  This is neccesary to properly follow links.
+   - The website's main url is the `baseUri` (e.g. https://www.cochranelibrary.com in our case).  This is necessary to properly follow links.
     - Once a `WebReader` is instantiated, you can use it to send requests and get responses from specific pages on the website (e.g. the topics page)
 - `WebResult` is what is returned from a page read.
     - It is a wrapper around the plain response text and a jsoup document (referred to in the code as a dom).
@@ -106,14 +106,14 @@ I used JUnit to create some automated tests.  I wanted to verify that certain fu
 - `TestHelpers` - The `CochraneExtractors` were potentially problematic to test.  I did not want to introduce external dependencies on the Cochrane website, and I did not want to have to wait for responses in the middle of my tests.  To circumvent this issue, I extended the Apache `HttpClient` and `HttpResponse`.  I created stubs that would serve up static files that I downloaded off of the Cochrane Library website.  This way, I could be sure that my extractors worked on the actual website data without requiring an internet connection, and without introducing a dependency on the current state of the Cochrane websites.
 
 ### Exception handling
-Since this is a CLI program and it has a single purpose that is likley to be used by a technical person, my philosophy was that the program should fail early and provide a detailed explaination when an exception occured.  Failing gracefully and allowing the user to continue was not a priority.  Making it easy to debug was a priority.
+Since this is a CLI program and it has a single purpose that is likely to be used by a technical person, my philosophy was that the program should fail early and provide a detailed explanation when an exception occurred.  Failing gracefully and allowing the user to continue was not a priority.  Making it easy to debug was a priority.
 
 ### Further development
 I considered a few paths for continued development, but ultimately I thought it was best to wrap the project up for now.  If this were a project I was working on, I would check with the stakeholders to determine the value of the following developments.  If they would provide value for their cost, we could include them in the scope of the project.
 
 - REST API: We could set up a server to respond to POST requests for the various topics.  We would run the same process to acquire the reviews, but we would return them as HTTP responses instead of as a flat file written to the file system.
 - Runnable executable: It would be possible to create an executable to run on Windows or Linux based operating systems.  Currently the Jar is useful because it is cross-platform.
-- CI/CD: It would be possible to build a CI/CD solution that would run automated tests, build the project, and publish artifcats (JAR, documentation, deploying REST API to a server, etc...)
+- CI/CD: It would be possible to build a CI/CD solution that would run automated tests, build the project, and publish artifacts (JAR, documentation, deploying REST API to a server, etc...)
 - Multithreading: This would be useful for speeding up the download when multiple large topics are required.  The bottleneck is the server response, so we could make multiple requests at the same time and wait for them to return.  I experimented with this already, but I found that the results were unreliable.  The website would occasionally not return complete results for large topics.  Additional debugging could resolve this issue.
 - GUI: If desired, a we could create a Swing UI or single page web app front end.  If we had a REST API, we could build it on top of that.
 
