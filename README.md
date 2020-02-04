@@ -99,6 +99,11 @@ A generic structure for obtaining HTTP responses and extracting data seemed like
 - `CochraneExtractors` is an object that contains static implementations of the `WebDataExtractor` used to obtain specific data from the Cochrane website. The available extractors are: `topicLinkExtractor`, `reviewExtractor`, `nextPageLinkExtractor`, and `expectedReviewCountExtractor`.  These extractors use jsoup to obtain the data from the HTML.
 
 ### Automated testing
+I used JUnit to create some automated tests.  I wanted to verify that certain functionality was working as expected, and that it did not break as I continued work on the project.
+
+- `WebReaderTest` - This tests that exceptions are thrown when the HTTP Response status code is not 200.  It also tests that the response body is correctly read and that a jsoup dom is created.
+- `CochraneExtractorsTest` - This verifies the behavior of the members of `CochraneExtractors`.
+- `TestHelpers` - The `CochraneExtractors` were potentially problematic to test.  I did not want to introduce external dependencies on the Cochrane website, and I did not want to have to wait for responses in the middle of my tests.  To circumvent this issue, I extended the Apache `HttpClient` and `HttpResponse`.  I created stubs that would serve up static files that I downloaded off of the Cochrane Library website.  This way, I could be sure that my extractors worked on the actual website data without requiring an internet connection, and without introducing a dependency on the current state of the Cochrane websites.
 
 ### Exception handling
 Since this is a CLI program and it has a single purpose that is likley to be used by a technical person, my philosophy was that the program should fail early and provide a detailed explaination when an exception occured.  Failing gracefully and allowing the user to continue was not a priority.  Making it easy to debug was a priority.
