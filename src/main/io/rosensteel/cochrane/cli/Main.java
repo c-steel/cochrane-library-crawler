@@ -52,7 +52,7 @@ public class Main {
 
     private static void displayHelp() {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("java -jar cochrane-library-crawler", getOptions());
+        formatter.printHelp("java -jar cochrane-library-crawler.jar", getOptions());
         displayTopicMenu();
     }
 

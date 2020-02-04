@@ -9,8 +9,7 @@ public class CochraneCrawler {
     private String cochraneBaseUri = "https://wwww.cochranelibrary.com";
     private String topicsUrl = "https://www.cochranelibrary.com/cdsr/reviews/topics";
     private WebReader webReader = new WebReader(HttpClients.createDefault(), cochraneBaseUri);
-    private boolean reportProgress = true;
-    CochraneTopics topicLinks = new CochraneTopics(webReader, topicsUrl, reportProgress);
+    CochraneTopics topicLinks = new CochraneTopics(webReader, topicsUrl);
 
     public Set<String> listAvailableTopics() {
         return topicLinks.getAllTopicNames();

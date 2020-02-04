@@ -33,10 +33,6 @@ public class CochraneReviews {
         return reviewListPage.extractData(CochraneExtractors.nextPageLinkExtractor);
     }
 
-    public ArrayList<CochraneReview> getAllLinks() {
-        return reviews;
-    }
-
     public Integer reviewCount() {
         return reviews.size();
     }
